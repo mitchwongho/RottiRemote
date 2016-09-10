@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RottiRemote</string>
+    <string name="forward">FORWARD</string>
+    <string name="backward">BACKWARD</string>
+    <string name="stop">STOP!</string>
+    <string name="left">LEFT</string>
+    <string name="right">RIGHT</string>
+</resources>

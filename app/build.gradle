@@ -1,0 +1,104 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+buildscript {
+    ext {
+        butterknifeVersion = '7.0.1'
+        rxAndroidVersion = '1.2.0'
+        rxjavaVersion = '1.1.7'
+        rxbindingVersion = '0.4.0'
+        androidSupportLibVersion = '24.2.0'
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+    }
+    // Exclude the version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
+    defaultConfig {
+        applicationId "com.mitchwongho.robotics.rotti"
+        minSdkVersion 18
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        incremental true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'LICENSE'
+        exclude 'NOTICE'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'META-INF/DEPENDENCIES'
+        pickFirst 'META-INF/maven/com.google.guava/guava/pom.xml'
+        pickFirst 'META-INF/maven/com.google.guava/guava/pom.properties'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = true
+    }//end dexOptions
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 8, 'hours'
+    resolutionStrategy.force "com.android.support:support-annotations:$androidSupportLibVersion"
+    resolutionStrategy.force "com.google.code.findbugs:jsr305:3.0.0"
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile "com.android.support:appcompat-v7:$androidSupportLibVersion"
+
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    compile "io.reactivex:rxandroid:$rxAndroidVersion"
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    compile "io.reactivex:rxjava:$rxjavaVersion"
+    // RxBinding
+    compile "com.jakewharton.rxbinding:rxbinding-design:$rxbindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding:$rxbindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-support-v4:$rxbindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:$rxbindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-recyclerview-v7:$rxbindingVersion"
+
+
+    testCompile 'junit:junit:4.12'
+}
+
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
+}
